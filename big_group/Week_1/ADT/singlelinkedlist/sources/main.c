@@ -417,7 +417,7 @@ void mainloop()
         {   
             int index;
             Elemtype data;
-            printf("输入想要插入的位置下标(以0为起点(类似数组)):\n");
+            printf("输入想要插入的位置下标(以0为起点(类似数组))(若下标大于链表长度,则将其置于链表尾部):\n");
             scanf("%d",&index);
             printf("输入想要插入的节点的值:\n");
             scanf("%d",&data);
