@@ -23,7 +23,7 @@ int main()
 }
 
 //链表初始化
-int init(SingleListNode** head,int data,int* length)
+int init(SingleListNode** head,Elemtype data,int* length)
 {   
     if(*head!=NULL)
     {
