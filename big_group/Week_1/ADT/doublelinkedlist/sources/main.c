@@ -210,7 +210,7 @@ void traverse_with_display_DoubleLinkedList(DoubleLinkedList** DLLp)
 
 }
 
-//主循环
+//主循环、菜单
 void mainloop()
 {   
     DoubleLinkedList* DLL=NULL;
@@ -230,7 +230,7 @@ void mainloop()
         4.删除链表元素\n\
         5.查找元素\n\
         6.退出\n\
-        输入对应编号(1-5):\n");
+        输入对应编号(1-6):\n");
 
         scanf("%d",&selection);
 
