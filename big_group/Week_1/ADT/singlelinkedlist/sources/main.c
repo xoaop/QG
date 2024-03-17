@@ -315,7 +315,7 @@ int reverse_not_recursion(SingleListNode** head)
     return 1;
 }
 
-int search_DoubleLinkedList(SingleListNode** head,Elemtype target)
+int search(SingleListNode** head,Elemtype target)
 {   
     if(*head==NULL)
         return 0;
