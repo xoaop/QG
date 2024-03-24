@@ -1,11 +1,11 @@
-#include"../Headers/stack.h"
+#include"../Headers/queue.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<windows.h>
 
 //获取相应类型的数据的大小
-size_t get_size_of_type(void* value,Elemtype type)
+size_t queue_get_size_of_type(void* value,Elemtype type)
 {
     if(type==_INT)
     {
@@ -21,143 +21,150 @@ size_t get_size_of_type(void* value,Elemtype type)
     }
 }
 
-//获取栈节点元素
-Status get_value(StackNode* node,void** output)
+//获取队列节点元素
+Status queue_get_value(QueueNode* node,void** output)
 {   
     if(node==NULL)
     {
         return _NULLPOINTER;
     }
 
-    size_t valuesize=get_size_of_type(node->value,node->type);
-    *output=malloc(get_size_of_type(node->value,node->type));
+    size_t valuesize=queue_get_size_of_type(node->value,node->type);
+    *output=malloc(queue_get_size_of_type(node->value,node->type));
     memcpy(*output,node->value,valuesize);
     return _SUCCESS;
 }
 
 
-//入栈
-Status stack_push(Stack* stack,void* value,Elemtype type)
+//入队列
+Status queue_push(Queue* queue,void* value,Elemtype type)
 {
-    if(stack==NULL)
+    if(queue==NULL)
     {
         return _NULLPOINTER;
     }
 
-    StackNode* newnode=(StackNode*)malloc(sizeof(StackNode));
+    QueueNode* newnode=(QueueNode*)malloc(sizeof(QueueNode));
     newnode->type=type;
 
-    size_t valuesize=get_size_of_type(value,type);
+    size_t valuesize=queue_get_size_of_type(value,type);
     newnode->value=malloc(valuesize);
+    newnode->next=NULL;
     
     memcpy(newnode->value,value,valuesize);
 
-    if(stack->stacktop==NULL)
+    if(queue->queuehead==NULL)
     {   
-        newnode->next=NULL;
-        stack->stacktop=newnode;
+        queue->queuehead=newnode;
+        queue->queuetail=newnode;
     }
     else
     {   
-        newnode->next=stack->stacktop;
-        stack->stacktop=newnode;
+        queue->queuetail->next=newnode;
     }
 
-    stack->size++;
+    queue->size++;
 
     return _SUCCESS;
 
 }
 
-//出栈
-Status stack_pop(Stack* stack)
+//出队
+Status queue_pop(Queue* queue)
 {
-    if(stack==NULL)
+    if(queue==NULL)
     {
         return _NULLPOINTER;
     }
 
-    if(stack->size==0)
+    if(queue->size==0)
     {
         return _ERROR;
     }
 
-    StackNode* poped=stack->stacktop;
-    stack->stacktop=stack->stacktop->next;
+    QueueNode* poped=queue->queuehead;
+    queue->queuehead=queue->queuehead->next;
+
 
     free(poped->value);
     free(poped);
-    stack->size--;
+    queue->size--;
+
+    if(queue->size==0)
+    {
+        queue->queuetail==NULL;
+    }
 
     return _SUCCESS;
 }
 
 
-//初始化栈
-Status stack_init(Stack** stack)
+//初始化队列
+Status queue_init(Queue** queue)
 {   
-    if(*stack!=NULL)
+    if(*queue!=NULL)
     {
         return _EXIST;
     }
 
-    *stack=(Stack*)malloc(sizeof(Stack));
-    (*stack)->size=0;
-    (*stack)->stacktop=NULL;
+    *queue=(Queue*)malloc(sizeof(Queue));
+    (*queue)->size=0;
+    (*queue)->queuehead=NULL;
+    (*queue)->queuetail=NULL;
 
     return _SUCCESS;
 
 }
 
-//销毁栈
-Status stack_destroy(Stack** stack)
+//销毁队列
+Status queue_destroy(Queue** queue)
 {   
-    if(*stack==NULL)
+    if(*queue==NULL)
     {
         return _NULLPOINTER;
     }
 
-    for(StackNode* front=(*stack)->stacktop,*behind=front;front!=NULL;)
+    for(QueueNode* front=(*queue)->queuehead,*behind=front;front!=NULL;)
     {
         front=front->next;
         free(behind);
         behind=front;
     }
 
-    free(*stack);
-    *stack=NULL;
+    free(*queue);
+    *queue=NULL;
 
     return _SUCCESS;
 
 }
 
-//获取栈顶元素
-Status stack_get_top(Stack* stack,void** output)
+//获取队列头元素
+Status queue_get_head(Queue* queue,void** output)
 {   
-    if(stack==NULL)
+    if(queue==NULL)
     {
         return _NULLPOINTER;
     }
 
-    if(stack->size==0)
+    if(queue->size==0)
     {
         return _ERROR;
     }
 
-    get_value(stack->stacktop,output);
+    queue_get_value(queue->queuehead,output);
 
     return _SUCCESS;
 }
 
-//获取栈大小
-int stack_get_size(Stack* stack)
+//获取队列大小
+int queue_get_size(Queue* queue)
 {
-    if(stack==NULL)
+    if(queue==NULL)
     {
         return 0;
     }
 
-    return stack->size;
+    return queue->size;
 }   
 
 //菜单
@@ -165,7 +172,7 @@ int main()
 {   
     SetConsoleOutputCP(65001);
 
-    Stack *stack=NULL;
+    Queue *queue=NULL;
 
     Status result;
     int selection;
@@ -175,13 +182,13 @@ int main()
 
 
         //打印菜单
-        printf("\n\n栈:\n\
-        1.创建栈\n\
-        2.销毁栈\n\
-        3.向栈推入元素\n\
-        4.弹出栈顶元素\n\
-        5.获取栈顶元素\n\
-        6.获取栈当前元素数量\n\
+        printf("\n\n队列:\n\
+        1.创建队列\n\
+        2.销毁队列\n\
+        3.向队列推入元素\n\
+        4.弹出队列头元素\n\
+        5.获取队列头元素\n\
+        6.获取队列当前元素数量\n\
         7.退出\n\
         输入对应编号(1-7):\n");
 
@@ -191,26 +198,26 @@ int main()
 
         if(selection==1)
         {   
-            result=stack_init(&stack);
+            result=queue_init(&queue);
             if(result==_SUCCESS)
             {
                 printf("\n创建成功");
             }
             else if(result==_EXIST)
             {
-                printf("\n栈已存在");
+                printf("\n队列已存在");
             }
         }
         else if(selection==2)
         {
-            result=stack_destroy(&stack);
+            result=queue_destroy(&queue);
             if(result==_SUCCESS)
             {
                 printf("\n销毁成功");
             }
             else if(result==_NULLPOINTER)
             {
-                printf("\n栈未创建");
+                printf("\n队列未创建");
             }
         }
         else if(selection==3)
@@ -220,7 +227,7 @@ int main()
             double ip2;
             char ip3[1000];
 
-            printf("\n输入想要入栈的数据的类型(输入1为int类型,2为double类型,3为字符串(char*)(大小不超过999)类型):\n");
+            printf("\n输入想要入队列的数据的类型(输入1为int类型,2为double类型,3为字符串(char*)(大小不超过999)类型):\n");
             scanf("%d",&tp);
             fflush(stdin);
 
@@ -242,7 +249,7 @@ int main()
                 }
                 else
                 {
-                    result=stack_push(stack,&ip1,tp);
+                    result=queue_push(queue,&ip1,tp);
                 }
             }
             else if(tp==_DOUBLE)
@@ -255,7 +262,7 @@ int main()
                 }
                 else
                 {
-                    result=stack_push(stack,&ip2,tp);
+                    result=queue_push(queue,&ip2,tp);
                 }
 
             }
@@ -269,7 +276,7 @@ int main()
                 }
                 else
                 {
-                    result=stack_push(stack,ip3,tp);
+                    result=queue_push(queue,ip3,tp);
                 }
 
             }
@@ -281,63 +288,63 @@ int main()
             }
             else if(result==_NULLPOINTER)
             {
-                printf("\n栈未创建");
+                printf("\n队列未创建");
             }
 
         }
         else if(selection==4)
         {
-            result=stack_pop(stack);
+            result=queue_pop(queue);
             if(result==_SUCCESS)
             {
                 printf("\n弹出成功");
             }
             else if(result==_NULLPOINTER)
             {
-                printf("\n栈未创建");
+                printf("\n队列未创建");
             }
             else if (result==_ERROR)
             {
-                printf("\n栈为空");
+                printf("\n队列为空");
             }
             
 
         }
         else if(selection==5)
         {   
-            if(stack==NULL)
+            if(queue==NULL)
             {
-                printf("\n栈未创建");
+                printf("\n队列未创建");
                 continue;
             }
-            if(stack->size==0)
+            if(queue->size==0)
             {
-                printf("\n栈为空");
+                printf("\n队列为空");
                 continue;
             }
 
             void* op;
 
-            result=stack_get_top(stack,&op);
+            result=queue_get_head(queue,&op);
 
             if(result==_SUCCESS)
             {
-                if(stack->stacktop->type==_INT)
+                if(queue->queuehead->type==_INT)
                 {
-                    printf("\n栈顶元素为:%d",*(int*)op);
+                    printf("\n队列顶元素为:%d",*(int*)op);
                 }
-                else if(stack->stacktop->type==_DOUBLE)
+                else if(queue->queuehead->type==_DOUBLE)
                 {
-                    printf("\n栈顶元素为:%lf",*(double*)op);
+                    printf("\n队列顶元素为:%lf",*(double*)op);
                 }
-                else if(stack->stacktop->type==_STRING)
+                else if(queue->queuehead->type==_STRING)
                 {
-                    printf("\n栈顶元素为:%s",(char*)op);
+                    printf("\n队列顶元素为:%s",(char*)op);
                 }
             }
             else if (result==_ERROR)
             {
-                printf("\n栈为空");
+                printf("\n队列为空");
             }
 
             free(op);
@@ -345,7 +352,7 @@ int main()
         }
         else if (selection==6)
         {
-            printf("\n元素数量为:%d",stack_get_size(stack));
+            printf("\n元素数量为:%d",queue_get_size(queue));
         }
         else if (selection==7)
         {
