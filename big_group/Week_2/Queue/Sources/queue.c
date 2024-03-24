@@ -19,6 +19,11 @@ size_t queue_get_size_of_type(void* value,Elemtype type)
     {
         return strlen((char*)value)+1;
     }
+    else if(type==_CHAR)
+    {
+        return sizeof(char);
+    }
+
 }
 
 //获取队列节点元素
@@ -61,6 +66,7 @@ Status queue_push(Queue* queue,void* value,Elemtype type)
     else
     {   
         queue->queuetail->next=newnode;
+        queue->queuetail = newnode;
     }
 
     queue->size++;
@@ -92,7 +98,7 @@ Status queue_pop(Queue* queue)
 
     if(queue->size==0)
     {
-        queue->queuetail==NULL;
+        queue->queuetail=NULL;
     }
 
     return _SUCCESS;

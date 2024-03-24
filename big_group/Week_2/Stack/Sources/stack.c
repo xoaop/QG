@@ -5,7 +5,7 @@
 #include<windows.h>
 
 //获取相应类型的数据的大小
-size_t get_size_of_type(void* value,Elemtype type)
+size_t stack_get_size_of_type(void* value,Elemtype type)
 {
     if(type==_INT)
     {
@@ -19,18 +19,22 @@ size_t get_size_of_type(void* value,Elemtype type)
     {
         return strlen((char*)value)+1;
     }
+    else if(type==_CHAR)
+    {
+        return sizeof(char);
+    }
 }
 
 //获取栈节点元素
-Status get_value(StackNode* node,void** output)
+Status stack_get_value(StackNode* node,void** output)
 {   
     if(node==NULL)
     {
         return _NULLPOINTER;
     }
 
-    size_t valuesize=get_size_of_type(node->value,node->type);
-    *output=malloc(get_size_of_type(node->value,node->type));
+    size_t valuesize=stack_get_size_of_type(node->value,node->type);
+    *output=malloc(stack_get_size_of_type(node->value,node->type));
     memcpy(*output,node->value,valuesize);
     return _SUCCESS;
 }
@@ -47,7 +51,7 @@ Status stack_push(Stack* stack,void* value,Elemtype type)
     StackNode* newnode=(StackNode*)malloc(sizeof(StackNode));
     newnode->type=type;
 
-    size_t valuesize=get_size_of_type(value,type);
+    size_t valuesize=stack_get_size_of_type(value,type);
     newnode->value=malloc(valuesize);
     
     memcpy(newnode->value,value,valuesize);
@@ -88,6 +92,11 @@ Status stack_pop(Stack* stack)
     free(poped->value);
     free(poped);
     stack->size--;
+
+    if (stack->size == 0)
+    {
+        stack->stacktop = NULL;
+    }
 
     return _SUCCESS;
 }
@@ -144,7 +153,7 @@ Status stack_get_top(Stack* stack,void** output)
         return _ERROR;
     }
 
-    get_value(stack->stacktop,output);
+    stack_get_value(stack->stacktop,output);
 
     return _SUCCESS;
 }
@@ -159,6 +168,7 @@ int stack_get_size(Stack* stack)
 
     return stack->size;
 }   
+
 
 //菜单
 int main()

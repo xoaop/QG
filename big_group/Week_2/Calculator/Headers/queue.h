@@ -1,27 +1,18 @@
+#include "status.h"
 #ifndef QUEUE_H
 #define QUEUE_H
 
-typedef unsigned long long size_t;
 
-//定义数据类型枚举
-typedef enum Elemtype
-{
-    _INT=1,
-    _DOUBLE=2,
-    _STRING=3,
-    _CHAR=4,
-}Elemtype;
-
-//定义栈节点
+//定义队列节点
 typedef struct QueueNode
 {
     void* value;
     Elemtype type;
-    QueueNode* next;
-}QueueNode;
+    struct QueueNode* next;
+} QueueNode;
 
 
-//定义栈
+//定义队列
 typedef struct Queue
 {   
     QueueNode* queuehead;
@@ -29,17 +20,6 @@ typedef struct Queue
     int size;
 } Queue;
 
-
-
-//定义状态枚举
-typedef enum Status 
-{
-	_ERROR,
-	_SUCCESS,
-    _OVERFLOW,
-    _EXIST,
-    _NULLPOINTER
-} Status;
 
 //函数声明
 size_t queue_get_size_of_type(void* value,Elemtype type);
