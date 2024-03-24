@@ -127,9 +127,18 @@ Status tramsform(Stack* stack,Queue* queue1,Queue* queue2)
     }
 
     while (stack->size != 0)
-    {
+    {   
+        if (*(char*)stack->stacktop->value == '(')
+        {
+            return _ERROR;
+        }
         queue_push(queue2, stack->stacktop->value, stack->stacktop->type);
         stack_pop(stack);
+    }
+
+    if (queue2->size == 0)
+    {
+        return _ERROR;
     }
 
     return _SUCCESS;
