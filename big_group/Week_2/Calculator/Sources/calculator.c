@@ -193,6 +193,11 @@ Status compute(Queue* queue, Stack* stack)
 
     }
 
+    if (stack->size != 1)
+    {
+        return _ERROR;
+    }
+
 
     return _SUCCESS;
 }
@@ -211,17 +216,15 @@ int main()
 
     Status result;
 
+    Stack* stack = NULL;
+    Queue* queue1 = NULL;
+    Queue* queue2 = NULL;
+
+
+
     while (1)
     {
 
-
-        Stack* stack = NULL;
-        Queue* queue1 = NULL;
-        Queue* queue2 = NULL;
-
-        stack_init(&stack);
-        queue_init(&queue1);
-        queue_init(&queue2);
 
         char input[1000];
 
@@ -233,6 +236,10 @@ int main()
             break;
         }
 
+        stack_init(&stack);
+        queue_init(&queue1);
+        queue_init(&queue2);
+
 
 
         fflush(stdin);
@@ -241,25 +248,43 @@ int main()
         if (result == _ERROR)
         {
             printf("\n输入格式有误");
+            stack_destroy(&stack);
+            queue_destroy(&queue1);
+            queue_destroy(&queue2);
             continue;
         }
         result=tramsform(stack, queue1, queue2);
         if (result == _ERROR)
         {
             printf("\n输入格式有误");
+            stack_destroy(&stack);
+            queue_destroy(&queue1);
+            queue_destroy(&queue2);
             continue;
         }
-         compute(queue2, stack);
+        result=compute(queue2, stack);
         if (result == _ERROR)
         {
             printf("\n输入格式有误");
+            stack_destroy(&stack);
+            queue_destroy(&queue1);
+            queue_destroy(&queue2);
             continue;
         }
 
+
+
+
         printf("\n%lf", *(double*)(stack->stacktop->value));
+
+        stack_destroy(&stack);
+        queue_destroy(&queue1);
+        queue_destroy(&queue2);
 
 
     }
+
+    
 
 
 
