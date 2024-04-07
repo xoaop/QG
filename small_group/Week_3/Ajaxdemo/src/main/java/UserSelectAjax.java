@@ -22,15 +22,18 @@ public class UserSelectAjax extends HttpServlet {
         //如果用户名为zhangsan则返回true，否则返回false
         //这里应该是从数据库中查询，这里为了简单直接写死
         //只有zhangsan这个用户存在
+        Boolean flag;
         if(username.equals("zhangsan"))
         {
-            resp.getWriter().write("true");
-            return;
+            flag=true;
+
         }
         else
         {
-            resp.getWriter().write("false");
+            flag=false;
         }
+
+        resp.getWriter().write(flag.toString());
 
     }
 

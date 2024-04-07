@@ -55,7 +55,7 @@ public class reqdemo extends HttpServlet
         //若用户名不为zhangsan，密码不为123，重定向调用doget
         else
         {
-            resp.sendRedirect("req1");
+            resp.sendRedirect( "/req1");
         }
     }
 }
