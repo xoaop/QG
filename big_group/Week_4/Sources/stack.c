@@ -64,7 +64,7 @@ Status stack_push(Stack* stack,void* value,Elemtype type)
     size_t valuesize=stack_get_size_of_type(value,type);
     newnode->value=malloc(valuesize);
     
-    memcpy(newnode->value,value,valuesize);
+    memcpy(newnode->value,(void**)value,valuesize);
 
     if(stack->stacktop==NULL)
     {   

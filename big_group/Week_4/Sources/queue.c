@@ -1,8 +1,8 @@
 #include"../Headers/queue.h"
 #include<stdio.h>
-#include<stdlib.h>
 #include<string.h>
 #include<windows.h>
+#include<stdlib.h>
 
 #define get_value(type,value) (*((type)*)(value))
 
@@ -66,7 +66,8 @@ Status queue_push(Queue* queue,void* value,Elemtype type)
     newnode->value=malloc(valuesize);
     newnode->next=NULL;
     
-    memcpy(newnode->value,value,valuesize);
+    
+    memcpy(newnode->value,(void**)value,valuesize);
 
     if(queue->queuehead==NULL)
     {   
@@ -182,3 +183,56 @@ int queue_get_size(Queue* queue)
 
     return queue->size;
 }   
+
+
+// typedef struct treenode
+// {
+//     int value;
+//     struct treenode* left;
+//     struct treenode* right;
+// }treenode;
+
+
+// int main()
+// {   
+//     treenode* root=(treenode*)malloc(sizeof(treenode));
+
+//     root->value=2;
+//     root->left=(treenode*)malloc(sizeof(treenode));
+//     root->right=(treenode*)malloc(sizeof(treenode));
+
+//     root->left->value=1;
+//     root->left->left=NULL;
+//     root->left->right=NULL;
+
+//     root->right->value=3;
+//     root->right->left=NULL;
+//     root->right->right=NULL;
+
+//     Queue* queue=NULL;   
+//     queue_init(&queue);
+
+//     queue_push(queue,&root,_POINTER);
+
+//     printf("%p\n",*(void**)queue->queuehead->value);
+
+//     int a=10;
+
+//     queue_push(queue,&a,_INT);
+
+//     printf("%d\n",*(int*)queue->queuehead->next->value);
+
+
+//     void* root2=NULL;
+//     queue_get_head(queue,&root2);
+
+//     queue_pop(queue);
+
+//     printf("%p\n",*(treenode**)root2);
+
+//     void* a2=NULL;
+
+//     queue_get_head(queue,&a2);
+
+//     printf("%d\n",*(int*)a2);
+// }   

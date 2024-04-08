@@ -223,16 +223,11 @@ void menu()
                 scanf("%d",&target);
                 fflush(stdin);
 
-                Treenode* node=bst_delete(bst,target);
-                if(node==NULL)
-                {
-                    printf("Failed to delete the node\n");
-                }
-                else
-                {
-                    printf("Successfully deleted the node\n");
-                }
+                bst_delete(bst, target);
+                printf("Successfully deleted the node\n");
+
                 continue;
+
             }
             
             case 13:

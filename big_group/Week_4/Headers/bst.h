@@ -24,6 +24,8 @@ typedef struct bst
 
 
 // Function declaration
+
+
 void bst_create_bst(BST** bst);
 void bst_destroy_tree(Treenode *root);
 void bst_destroy_bst(BST **bst);

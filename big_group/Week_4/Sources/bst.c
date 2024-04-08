@@ -5,7 +5,7 @@
 #include "../Headers/status.h"
 
 
-
+//create a binary search tree
 void bst_create_bst(BST** bst)
 {
     if (*bst != NULL)
@@ -18,6 +18,7 @@ void bst_create_bst(BST** bst)
     return bst;
 }
 
+//destroy the binary search tree
 void bst_destroy_tree(Treenode *root)
 {
     if (root == NULL)
@@ -38,6 +39,8 @@ void bst_destroy_bst(BST **bst)
     *bst = NULL;
 }
 
+
+//insert a node
 Treenode* bst_insertnode(Treenode* rootnode,Type data)
 {
     if(rootnode == NULL)
@@ -61,6 +64,8 @@ Treenode* bst_insertnode(Treenode* rootnode,Type data)
     return rootnode;
 }
 
+
+//insert a node
 void bst_insert(BST* bst, Type data)
 {
     if(bst == NULL)
@@ -109,36 +114,41 @@ void bst_inorder_travel(BST* bst,int* size)
 }
 
 void bst_inorder_nonrecursive(Treenode* root,int* size)
-{
-    Stack *stack = NULL;
+{   
+    if(root == NULL)
+        return ;
+
+    Stack* stack = NULL;
     stack_init(&stack);
 
-    Treenode* current = root;
+    Treenode* currentnode;
+    void* current;
 
-    stack_push(stack,current,_POINTER);
+    stack_push(stack,&root,_POINTER);
 
     while(stack_get_size(stack)>0)
     {
         stack_get_top(stack,&current);
         stack_pop(stack);
+        currentnode = *(Treenode**)current;
 
-        while(current != NULL)
+        while(currentnode != NULL)
         {
-            stack_push(stack,&current,_POINTER);
-
-            current = current->left;
+            stack_push(stack,&currentnode, _POINTER);
+            currentnode = currentnode->left;
         }
 
         if(stack_get_size(stack)>0)
         {
             stack_get_top(stack,&current);
             stack_pop(stack);
+            currentnode = *(Treenode**)current;
 
-            printf("%d ",current->data);
+            printf("%d ",currentnode->data);
             (*size)++;
 
-            current = current->right;
-            stack_push(stack,&current,_POINTER);
+            currentnode = currentnode->right;
+            stack_push(stack,&currentnode,_POINTER);
         }
     }
 }
@@ -180,32 +190,39 @@ void bst_preorder_travel(BST* bst,int* size)
 
 
 void bst_preorder_nonrecursive(Treenode* root,int* size)
-{
+{   
+    if(root == NULL)
+        return ;
+
     Stack* stack = NULL;
     stack_init(&stack);
 
-    Treenode* current = root;
+    Treenode* currentnode =NULL;
+    void* current;
 
-    stack_push(stack,current,_POINTER);
+    stack_push(stack,&root,_POINTER);
 
     while(stack_get_size(stack)>0)
     {
         stack_get_top(stack,&current);
         stack_pop(stack);
+        currentnode = *(Treenode**)current;
 
-        printf("%d ",current->data);
+        printf("%d ",currentnode->data);
         (*size)++;
 
-        if(current->right != NULL)
+        if(currentnode->right != NULL)
         {
-            stack_push(stack,&(current->right),_POINTER);
+            stack_push(stack,&(currentnode->right),_POINTER);
         }
 
-        if(current->left != NULL)
+        if(currentnode->left != NULL)
         {
-            stack_push(stack,&(current->left),_POINTER);
+            stack_push(stack,&(currentnode->left),_POINTER);
         }
     }
+
+    stack_destroy(&stack);
 }
 
 void bst_preorder_nonrecursive_travel(BST* bst,int* size)
@@ -221,45 +238,41 @@ void bst_preorder_nonrecursive_travel(BST* bst,int* size)
 
 
 void bst_postorder_nonrecursive(Treenode* root,int* size)
-{
+{   
+    if(root == NULL)
+        return ;
+
     Stack* stack = NULL;
     stack_init(&stack);
 
-    Treenode* current = root;
-    Treenode* lastvisited = NULL;
+    Treenode* currentnode = NULL;
+    void* current;
 
-    stack_push(stack,current,_POINTER);
+    Treenode* prevnode = NULL;
 
-    while(stack_get_size(stack)>0)
+    stack_push(stack, &root, _POINTER);
+
+    while (stack_get_size(stack) > 0) 
     {
-        stack_get_top(stack,&current);
-        if(lastvisited == NULL || lastvisited->left == current || lastvisited->right == current)
-        {
-            if(current->left != NULL)
-            {
-                stack_push(stack,&(current->left),_POINTER);
-            }
-            else if(current->right != NULL)
-            {
-                stack_push(stack,&(current->right),_POINTER);
-            }
-        }
-        else if(current->left == lastvisited)
-        {
-            if(current->right != NULL)
-            {
-                stack_push(stack,&(current->right),_POINTER);
-            }
-        }
-        else
-        {
-            printf("%d ",current->data);
-            (*size)++;
-            stack_pop(stack);
-        }
+        stack_get_top(stack, &current);
+        currentnode = *(Treenode**)current;
 
-        lastvisited = current;
+        if (currentnode->left != NULL && currentnode->left != prevnode && currentnode->right != prevnode) 
+        {
+            stack_push(stack, &(currentnode->left), _POINTER);
+        } else if (currentnode->right != NULL && currentnode->right != prevnode) 
+        {
+            stack_push(stack, &(currentnode->right), _POINTER);
+        } else 
+        {
+            stack_pop(stack);
+            printf("%d ", currentnode->data);
+            (*size)++;
+            prevnode = currentnode;
+        }
     }
+
+    stack_destroy(&stack);
 }
 
 void bst_postorder_nonrecursive_travel(BST* bst,int* size)
@@ -274,23 +287,24 @@ void bst_postorder_nonrecursive_travel(BST* bst,int* size)
 
 Treenode* bst_search(Treenode* root,Type target)
 {
-    if(root==NULL)
+    if (root == NULL)
     {
         return NULL;
     }
 
-    if(target>root->data)
+    if (target > root->data)
     {
-        return bst_search(root->right,target);
+        return bst_search(root->right, target);
     }
-    else if(target<root->data)
+    else if (target < root->data)
     {
-        return bst_search(root->left,target);
+        return bst_search(root->left, target);
     }
     else
     {
         return root;
     }
+    
 
 }
 
@@ -302,7 +316,7 @@ Treenode* bst_search_bst(BST* bst,Type target)
         return NULL;
     }
 
-    return bst_search(bst,target);
+    return bst_search(bst->root,target);
 }
 
 void bst_postorder(Treenode* root,int* size)
@@ -327,32 +341,39 @@ void bst_postorder_travel(BST* bst,int* size)
 }
 
 void bst_leverorder(Treenode* root, int* size)
-{
+{   
+    if(root == NULL)
+    {
+        return;
+    }
+
     Queue* queue = NULL;
     queue_init(&queue);
 
-    Treenode* current;
+    void* current;
 
-    queue_push(queue,root,_POINTER);
+    queue_push(queue,&root,_POINTER);
 
     while(queue_get_size(queue)>0)
     {
         queue_get_head(queue,&current);
         queue_pop(queue);
 
-        printf("%d ",current->data);
+        printf("%d ",(*(Treenode**)current)->data);
         (*size)++;
 
-        if(current->left != NULL)
+        if((*(Treenode**)current)->left != NULL)
         {
-            queue_push(queue,current->left,_POINTER);
+            queue_push(queue,&((*(Treenode**)current)->left),_POINTER);
         }
 
-        if(current->right != NULL)
+        if((*(Treenode**)current)->right != NULL)
         {
-            queue_push(queue,current->right,_POINTER);
+            queue_push(queue,&((*(Treenode**)current)->right),_POINTER);
         }
     }
+
+    queue_destroy(&queue);
 
 }
 
@@ -369,10 +390,12 @@ void bst_leverorder_travel(BST* bst,int* size)
 
 Treenode* bst_delete_node(Treenode* root,Type target)
 {
+
     if(root == NULL)
     {
         return NULL;
     }
+
 
     if(target > root->data)
     {
@@ -382,14 +405,16 @@ Treenode* bst_delete_node(Treenode* root,Type target)
     {
         root->left = bst_delete_node(root->left,target);
     }
-    else
-    {
+    else//target==root->data
+    {   
+        //left is null or all is null
         if(root->left == NULL)
         {
             Treenode* temp = root->right;
             free(root);
             return temp;
         }
+        //left is not null
         else if(root->right == NULL)
         {
             Treenode* temp = root->left;
@@ -399,13 +424,23 @@ Treenode* bst_delete_node(Treenode* root,Type target)
         else
         {
             Treenode* temp = root->right;
-            while(temp->left != NULL)
+            if(temp->left == NULL)
             {
-                temp = temp->left;
+                root->data = temp->data;
+                root->right = temp->right;
+                free(temp);
             }
-            root->data = temp->data;
-            root->right = bst_delete_node(root->right,temp->data);
-            
+            else
+            {
+                while(temp->left->left != NULL)
+                {
+                    temp = temp->left;
+                }
+                root->data = temp->left->data;
+                Treenode* delNode = temp->left;
+                temp->left = temp->left->right;
+                free(delNode);
+            }
         }
     }
 
@@ -420,7 +455,11 @@ Treenode* bst_delete(BST* bst,Type target)
         return NULL;
     }
 
-    return bst_delete_node(bst->root,target);
+
+
+    bst->root= bst_delete_node(bst->root,target);
+    return bst->root;
+
 }
 
 
