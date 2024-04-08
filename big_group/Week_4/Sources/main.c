@@ -12,7 +12,6 @@ void menu()
 
     while(1)
     {
-
     
 
         printf("1. Create a binary search tree\n");
@@ -249,7 +248,8 @@ void menu()
 }
 
 int main()
-{
+{   
+
     menu();
     return 0;
 }
