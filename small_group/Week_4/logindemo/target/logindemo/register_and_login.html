@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录注册</title>
+</head>
+<body>
+    <h1>登录</h1>
+    <form action="" method="post">
+        <label for="username1">用户名：</label>
+        <span id="username_error" style="color: red;display: none">用户名不存在</span>
+        <input type="text" id="username1" name="username" required>
+        <br>
+        <label for="password1">密码：</label>
+        <input type="password" id="password1" name="password" required>
+        <br>
+        <input type="button" id="button1" value="登录">
+    </form>
+
+    <h1>注册</h1>
+    <form action="" method="post">
+        <label for="username2">用户名：</label>
+        <input type="text" id="username2" name="username" required>
+        <br>
+        <label for="password2">密码：</label>
+        <input type="password" id="password2" name="password" required>
+        <br>
+        <input type="button" id="button2" value="注册">
+    </form>
+
+<!--    一个可以检测button1的点击事件的方法，点击后发送一个POST请求到loginServlet/login，请求参数为username和password-->
+<!--    //如果返回的responseText为"Login successful"，则弹出"登录成功"，否则弹出"登录失败"-->
+    <script>
+        const button1 = document.getElementById("button1");
+        button1.addEventListener("click", function () {
+            const username = document.getElementById("username1").value;
+            const password = document.getElementById("password1").value;
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://localhost:8080/logindemo/loginServlet/login", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("username=" + username + "&password=" + password);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    if (xhr.responseText == "Login successful") {
+                        alert("登录成功");
+                    } else {
+                        alert("登录失败");
+                    }
+                }
+            };
+        });
+
+    </script>
+
+
+
+    <script>
+        const button2 = document.getElementById("button2");
+        button2.addEventListener("click", function () {
+            const username = document.getElementById("username2").value;
+            const password = document.getElementById("password2").value;
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://localhost:8080/logindemo/loginServlet/register", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("username=" + username + "&password=" + password);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    if (xhr.responseText == "User registered successfully") {
+                        alert("注册成功");
+                    } else {
+                        alert("用户名已存在");
+                    }
+                }
+            };
+        });
+
+    </script>
+
+
+
+
+
+</body>
+</html>
